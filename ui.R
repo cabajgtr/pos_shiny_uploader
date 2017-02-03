@@ -16,15 +16,15 @@ ui_tab2 <- tabPanel("Distributor to Reseller",
 shinyUI(fluidPage(navbarPage("POS Uploader",
         tabPanel("POS Transactions",
                                       fluidRow(
-                                        column(2, selectizeInput("wCustomer_Name", label = 'Distributor',choices = DistyResellerList[['distributor']])),
+                                        column(3, selectizeInput("wCustomer_Name", label = 'Distributor',choices = DistyResellerList[['distributor']])),
                                         column(4, dateRangeInput("wDateRange", label = "Date range")),
-                                        textOutput('valDateRange')
+                                        actionButton("updateQry", "ReRun")
                                       ),
                                       
                                       fluidRow(
                                         
-                                        rHandsontableOutput('contents', width = '100%'),
-                                        actionButton("updateQry", "ReRun")
+                                        rHandsontableOutput('contents', width = '100%')
+                                        
                                       )
                              ),
                              ui_tab2
