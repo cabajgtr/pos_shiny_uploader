@@ -1,27 +1,36 @@
 
-library(tidyverse)
-library(RPostgreSQL)
-source('R/helper_functions.R')
-source("R/import_tools.R")
-
-db <- db_connect()
-sql_code <- "SELECT * FROM transaction.pos_transactions_weekly WHERE date_id = '2017-01-28' AND customer_code = 'IND00004'"
-customers <- tbl(db, sql(sql_code)) %>% collect() %>% as.data.frame()
-#v_account_manager <- RPostgreSQL::dbGetQuery(db$con,"SELECT reporting_name FROM transaction.kam")[,1]
-
 library(shiny)
 
 
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
   
+  observeEvent(input$do, {
+    session$sendCustomMessage(type = 'testmessage',
+                              message = 'Thank you for clicking')
+  })
+  
+  table_chg <- eventReactive(input$updateQry, {
+    output$valDateRange <- renderPrint({ input$wDateRange })
+    print("update triggered")
+    customers <- sql_df(getSQL_invoices(input$wDateRange[1], input$wDateRange[2], input$wCustomer_Name)) %>% as.data.frame()
+    print(customers)
+    #output$contents <- renderRHandsontable({
+    #  rhandsontable(customers, width = '100%') %>% 
+    #    hot_col(col = "date_id", type = "date") %>%  #, source = v_account_manager) %>% 
+    #    hot_col(col = "reseller", type = "dropdown", source = getValidResellerList(input$wCustomer_Name))
+    #})  
+  })
+  
+    
   output$contents <- renderRHandsontable({
     rhandsontable(customers, width = '100%') %>% 
-      hot_col(col = "date_id", type = "date") #, source = v_account_manager)
+      hot_col(col = "date_id", type = "date") %>%  #, source = v_account_manager) %>% 
+      hot_col(col = "reseller", type = "dropdown", source = getValidResellerList(input$wCustomer_Name))
   })
   
-  table_chg <- eventReactive(input$go, {
-    return(hot_to_r(input$contents))
-  })
+  #table_chg <- eventReactive(input$go, {
+  #  return(hot_to_r(input$contents))
+  #})
   
   output$customers_o <- renderTable({
     table_chg()
