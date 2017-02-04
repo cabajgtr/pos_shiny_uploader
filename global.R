@@ -1,5 +1,4 @@
 library(tidyverse)
-library(RPostgreSQL)
 library(rhandsontable)
 source('R/helper_functions.R')
 source("R/import_tools.R")

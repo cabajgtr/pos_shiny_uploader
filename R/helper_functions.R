@@ -7,7 +7,7 @@
 ######  Database Connection and Query
 
 #Open Connection to AWS Server
-require(RPostgreSQL)
+require(RPostgres)
 
 db_connect <- function() {
   src_postgres(dbname = 'parrotdb', host = 'parrot-pg.c36tfcszakuq.us-west-2.rds.amazonaws.com', port = '5432',  

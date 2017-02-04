@@ -1,6 +1,6 @@
 
 
-ui_tab2 <- tabPanel("Distributor to Reseller",
+ui_tab2 <- tabPanel("tbd",
                     fluidRow(
                       h1("Assign Reseller to Distributor Sales Doc")
                     ),
@@ -14,17 +14,16 @@ ui_tab2 <- tabPanel("Distributor to Reseller",
 
 
 shinyUI(fluidPage(navbarPage("POS Uploader",
-        tabPanel("POS Transactions",
+        tabPanel("Distributor to Resellers",
                                       fluidRow(
                                         column(3, selectizeInput("wCustomer_Name", label = 'Distributor',choices = DistyResellerList[['distributor']])),
                                         column(4, dateRangeInput("wDateRange", label = "Date range")),
-                                        actionButton("updateQry", "ReRun")
+                                        actionButton("updateQry", "Refresh")
                                       ),
                                       
                                       fluidRow(
-                                        
-                                        rHandsontableOutput('contents', width = '100%')
-                                        
+                                        rHandsontableOutput('contents', width = '100%'),
+                                        actionButton("uploadRecode", "Update")
                                       )
                              ),
                              ui_tab2

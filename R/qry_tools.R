@@ -18,3 +18,11 @@ getValidResellerList <- function(disty){
   rl <- DistyResellerList$df %>% filter(distributor == disty) %>% .[["reseller"]] %>% sort()
   return(c(disty,rl))
 }
+
+upload_shipment_reassign <- function(tbl_docnums) {
+  x <- DBI::dbGetQuery(db$con, "TRUNCATE TABLE transaction.shipment_reseller_assign_stage")
+  x <- dbWriteTable(db$con, c("transaction","shipment_reseller_assign_stage"), tbl_docnums, row.names=FALSE, append=TRUE)
+  return(DBI::dbGetQuery(db$con, "SELECT transaction.upsert_shipment_reseller_assign();"))
+}
+
+
