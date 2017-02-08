@@ -17,6 +17,21 @@ getInvoices <- function(datefrom, dateto, customer) {
   return(out)
 }
 
+getPOSdetail <- function(datefrom, dateto, customer) {
+  sql_code <- paste0("SELECT * ",
+                     "FROM transaction.pos_transactions_simple ",
+                     "WHERE date_id BETWEEN '",datefrom,"' AND '",dateto, "' AND customer_name = '", customer,"'")
+#  print(sql_code)
+  out <- sql_df(sql_code) %>% collect %>% slice(1:1000) %>%  as.data.frame()
+  if(nrow(out) == 0){
+    out <- data.frame(date_id = as.Date('2000-01-01'), customer_name = NA, p.store_number = NA, sku = NA, 
+                      prod.description= NA, pos_units= 0L, pos_sales_retail = 0, 
+                      rtl_inventory = 0L, pos_unit_returns= 0L, pos_sales_retail_returns = 0, 
+                      distributor_code = NA, sellout_flag = TRUE, sellthru_flag = FALSE)
+  }
+  return(out)
+}
+
 getDistyResellerList <- function() {
   df <- sql_df("SELECT * from public.distributor_reseller_list") %>% collect
   reseller <- df %>% .[["reseller"]] %>% unique() %>% sort()
@@ -27,6 +42,12 @@ getDistyResellerList <- function() {
 getValidResellerList <- function(disty){
   rl <- DistyResellerList$df %>% filter(distributor == disty) %>% .[["reseller"]] %>% sort()
   return(c(disty,rl))
+}
+
+getPOSCustomerList <- function() {
+  df <- sql_df("SELECT DISTINCT p.customer_code, c.customer_name from transaction.pos_transactions_weekly p, transaction.customer c WHERE p.customer_code = c.customer_code AND sellout_flag = TRUE") %>% collect
+  customer_name <- df %>% .[["customer_name"]] %>% sort()
+  return(list(df = df, customer_name = customer_name))
 }
 
 upload_shipment_reassign <- function(tbl_docnums) {
@@ -55,3 +76,9 @@ getInvalidSkus <- function() {
   }
   return(out)
 }
+
+getForecastData <- function(){
+  sql_code <- 'SELECT * FROM "parrotdb"."public"."forecast_actual" where yearmonth::int > 201612'
+  sql_df(sql_code)
+}
+

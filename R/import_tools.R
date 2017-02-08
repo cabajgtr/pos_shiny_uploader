@@ -1,6 +1,6 @@
 #Import Helpers
 require(readr)
-require(htmltab)
+#require(htmltab)
 require(readxl)
 require(stringr)
 require(data.table)
@@ -123,8 +123,14 @@ validate_customer_code <- function(reseller_vector, valid_method) {
   return(new_sku$cleancustomer)
 }
 
+CustomerList$df
 
-upload_data <- function(validated_data, dest_table = NULL, dbCon = NULL, stage_only = F) {
+
+upload_pos <- function(df, dest_table = NULL, dbCon = NULL, stage_only = F) {
+  validated_data <- df %>% inner_join(CustomerList$df, by = c("customer_name" = "customer_name")) %>% 
+    select(date_id, customer_code, store_number, sku, pos_units, pos_sales_retail, rtl_inventory, 
+           pos_unit_returns, pos_sales_retail_returns, distributor_code, sellthru_flag, sellout_flag)
+  
   db <- db_connect() #ifelse(is.null(dbCon), db_connect(), dbCon)
   #db <- db()
   dest_table = ifelse(is.null(dest_table), 'pos_detail_stage', dbCon)

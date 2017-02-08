@@ -66,5 +66,34 @@ shinyServer(function(input, output, session) {
     showNotification(paste("results:", rtn)) #notify results summary
   })
   
-  
+  #########################
+  ##POS Detail
+  ##
+    observeEvent(input$pos_updateQry, {
+    #shinyjs::hide("contents") # Hide HOtable in case of zero record return
+    #output$valDateRange <- renderPrint({ input$wDateRange })
+    tbl_pos <<- withProgress(message = 'Querying Database', {
+        getPOSdetail(input$wposDateRange[1], input$wposDateRange[2], input$wposCustomer_Name)})
+    
+    showNotification(paste("returned ", nrow(tbl_pos)," records")) #notify results summary
+    
+    #req(nrow(tbl_ship_disty) > 0)
+    output$pos_contents <- renderRHandsontable({
+      rhandsontable(tbl_pos, width = '100%', readOnly = FALSE) %>% 
+        hot_col(col = "date_id", type = "date") #%>%
+        #hot_col(col = "reseller", type = "dropdown", source = getValidResellerList(input$wCustomer_Name), readOnly = FALSE)
+      
+    })  
+  })
+    
+    observeEvent(input$updatePOS, {
+      recode_changes <- hot_to_r(input$pos_contents) %>%  #Get Current Values of Table
+        anti_join(tbl_pos) %>% #Compare against last refresh, and return changed rows
+        #select(document_number, reseller) %>%  #only need Doc number (key) and Reseller (value)
+        distinct() 
+      
+      rtn <- recode_changes %>% upload_pos(stage_only = FALSE)
+      showNotification(paste("results:", rtn)) #notify results summary
+    })
+    
 })
