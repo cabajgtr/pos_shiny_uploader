@@ -123,8 +123,6 @@ validate_customer_code <- function(reseller_vector, valid_method) {
   return(new_sku$cleancustomer)
 }
 
-CustomerList$df
-
 
 upload_pos <- function(df, dest_table = NULL, dbCon = NULL, stage_only = F) {
   validated_data <- df %>% inner_join(CustomerList$df, by = c("customer_name" = "customer_name")) %>% 

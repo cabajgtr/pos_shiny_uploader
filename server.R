@@ -1,8 +1,10 @@
+print("server.R")
 library(shinyjs)
 library(shiny)
 
 tbl_ship_disty <- as.data.frame(NULL) #sql_df(getSQL_invoices('2017-01-01', '2017-01-01', 'SUPERIOR COMMUNICATION')) %>% select(-distributor) %>% as.data.frame()
 tbl_check_missing_sku <- as.data.frame(NULL) #data.frame(matrix(nrow = 0, ncol = 7))
+#CustomerList <- NULL
 
 shinyServer(function(input, output, session) {
   

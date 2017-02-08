@@ -1,3 +1,5 @@
+print("ui.R")
+
 library(shinythemes)
 library(shinyjs)
 library(lubridate)
